@@ -1,18 +1,24 @@
 package com.core.DataProvider.device;
 
-import com.core.DataProvider.sensor.AddSensorRequest;
+import com.core.DataProvider.measurement.MeasuramentRepository;
+import com.core.DataProvider.measurement.Measurement;
+
 import com.core.DataProvider.sensor.Sensor;
 import com.core.DataProvider.sensor.SensorRepository;
 import com.mongodb.client.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping("/api/devices")
@@ -29,6 +35,15 @@ public class DeviceController {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+
+    @Autowired
+    MeasuramentRepository measuramentRepository;
+
+    @GetMapping("/measurement/{idDevice}")
+    public Measurement getMeasurement(@PathVariable String idDevice) {
+        return measuramentRepository.findByFromDeviceOrderByTimestampDesc(idDevice).get(0);
+
+    }
 
     @GetMapping("/get/{userId}")
     public List<Device> responsetest( @PathVariable String userId) {
