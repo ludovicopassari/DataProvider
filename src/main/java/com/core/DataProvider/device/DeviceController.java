@@ -38,6 +38,8 @@ public class DeviceController {
 
     @Autowired
     MeasuramentRepository measuramentRepository;
+    @Autowired
+    private TaskService taskService;
 
     @GetMapping("/measurement/{idDevice}")
     public Measurement getMeasurement(@PathVariable String idDevice) {
@@ -53,8 +55,15 @@ public class DeviceController {
 
 
     @PostMapping
-    public Device createDevice(@RequestBody Device device) {
-        return deviceRepository.save(device);
+    public ResponseEntity createDevice(@RequestBody Device device) {
+        try {
+            taskService.performDeviceInsert(device);
+            return ResponseEntity.ok().body("Device add OK");
+            // todo specializza l'eccezione
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Errore");
+        }
+
     }
 
     @GetMapping
